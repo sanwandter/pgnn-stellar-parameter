@@ -44,16 +44,15 @@ def main():
     print("Loading data...")
     t0 = time.time()
     data = load_all_data()
-    data_raw = None  # loaded lazily if a no_augment config is requested
     print(f"Data loaded in {time.time()-t0:.1f}s")
 
     scaler = data["scaler"]
     all_results = {}
 
-    # Training order: baseline first (pgnn_ft depends on baseline_aug)
+    # Training order: baseline first (pgnn_ft depends on it)
     config_order = []
     for c in args.configs:
-        if c in ("baseline", "baseline_aug"):
+        if c == "baseline":
             config_order.insert(0, c)
         else:
             config_order.append(c)
@@ -64,17 +63,6 @@ def main():
             continue
 
         config = dict(CONFIGS[config_name])  # copy so we can mutate
-
-        # Select augmented vs raw data
-        if config.get("no_augment"):
-            if data_raw is None:
-                print("Loading data (no augmentation)...")
-                t0 = time.time()
-                data_raw = load_all_data(augment=False)
-                print(f"Raw data loaded in {time.time()-t0:.1f}s")
-            active_data = data_raw
-        else:
-            active_data = data
 
         # Grid search: override lambda_max and suffix checkpoint name
         run_name = config_name
@@ -95,14 +83,14 @@ def main():
             if not args.eval_only:
                 baseline_ckpt = None
                 if config["variant"].startswith("pgnn-ft"):
-                    baseline_ckpt = str(CHECKPOINT_DIR / f"baseline_aug_seed{seed}.pt")
+                    baseline_ckpt = str(CHECKPOINT_DIR / f"baseline_seed{seed}.pt")
                     if not Path(baseline_ckpt).exists():
                         print(f"  ERROR: baseline checkpoint not found: {baseline_ckpt}")
                         print("  Train baseline first!")
                         continue
 
                 ckpt_path = train_model(
-                    run_name, config, seed, active_data, device,
+                    run_name, config, seed, data, device,
                     baseline_ckpt=baseline_ckpt,
                 )
 
@@ -116,7 +104,7 @@ def main():
             )
 
             print("  Evaluating...")
-            results = run_full_evaluation(model, active_data, scaler, device)
+            results = run_full_evaluation(model, data, scaler, device)
             all_results[run_name][f"seed_{seed}"] = results
 
             # Print summary

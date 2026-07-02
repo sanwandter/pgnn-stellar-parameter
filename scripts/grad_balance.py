@@ -50,7 +50,7 @@ def measure(model, tag):
 
 measure(PGNNModel().to(device), "RANDOM INIT")
 
-ck = CHECKPOINT_DIR / "baseline_aug_seed42.pt"
+ck = CHECKPOINT_DIR / "baseline_seed42.pt"
 if ck.exists():
     m = PGNNModel().to(device)
     m.load_state_dict(torch.load(ck, map_location=device, weights_only=True))

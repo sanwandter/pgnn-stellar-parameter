@@ -22,13 +22,6 @@ CONFIGS = {
     "baseline": dict(
         lambda_max=0.0, e_delay=0, e_ramp=0, w_domain=0.0,
         patience_lr=5, patience_es=10, variant="baseline",
-        no_augment=True,
-    ),
-    # Augmented baseline: internal pre-training checkpoint for pgnn_ft init.
-    # Not a reported result — use baseline_aug_seed{seed}.pt checkpoints.
-    "baseline_aug": dict(
-        lambda_max=0.0, e_delay=0, e_ramp=0, w_domain=0.0,
-        patience_lr=5, patience_es=10, variant="baseline",
     ),
     # PGNN variants: checkpoint is force-saved at ramp completion so the final model
     # is always post-physics, not the pre-ramp minimum that ES would otherwise restore.
