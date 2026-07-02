@@ -16,12 +16,13 @@ import torch
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib.patches import Rectangle
 
 from pgnn.config import SEEDS, CHECKPOINT_DIR, PARAM_NAMES
 from pgnn.data import load_all_data
 from pgnn.model import PGNNModel
 
-OUT = Path(__file__).resolve().parent.parent / "final_submission"
+OUT = Path(__file__).resolve().parent.parent / "final_submission" / "figs"
 RANGES = {"teff": (30000.0, 50000.0), "logg": (2.9, 4.3), "rstar": (7.0, 70.0)}
 C_BASE, C_PGNN = "#c0392b", "#2471a3"
 
@@ -60,7 +61,7 @@ mask_r = np.array(b["meta"]["has_rstar"])
 pb = predict_iacob("baseline", 42)
 pp = predict_iacob("pgnn_ft_lam025", 42)
 
-panels = [("teff", r"$T_\mathrm{eff}$ [K]", None),
+panels = [("teff", r"$T_\mathrm{eff}$ [K]", (30000, 50000)),
           ("logg", r"$\log g$", (2.9, 4.3)),
           ("rstar", r"$R_*$ [$R_\odot$]", (7, 70))]
 fig, axes = plt.subplots(1, 3, figsize=(10.5, 3.4))
@@ -73,9 +74,12 @@ for ax, (k, lab, rng) in zip(axes, panels):
     hi = max(t.max(), pb[k][m].max(), pp[k][m].max())
     ax.plot([lo, hi], [lo, hi], "k--", lw=1, alpha=0.7)
     if rng:
-        ax.axhspan(rng[0], rng[1], color="green", alpha=0.06)
+        side = rng[1] - rng[0]
+        ax.add_patch(Rectangle((rng[0], rng[0]), side, side,
+                                facecolor="green", alpha=0.06, edgecolor="none", zorder=0))
     if k == "rstar":
         ax.set_ylim(top=30)  # zoom in: predictions/labels live below 30 R_sun
+        ax.set_xlim(right=30)
     ax.set_xlabel(f"{lab} (literatura)")
     ax.set_ylabel(f"{lab} (predicho)")
     ax.set_title(lab)
