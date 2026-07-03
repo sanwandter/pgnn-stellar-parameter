@@ -63,11 +63,20 @@ $$
 ## Repository layout
 
 ```
-pgnn/           model, losses (supervised + physics), training, evaluation
-run.py          full pipeline: all configs × seeds, or single runs / eval-only
-scripts/        paper figures and analysis
-data/           H-alpha profiles (ISOSCELES, IACOB, UVES POP) + scaler
-outputs/        per-seed metrics (JSON), training logs, checkpoints
+pgnn/               model, losses (supervised + physics), training, evaluation
+run.py              full pipeline: all configs × seeds, or single runs / eval-only
+scripts/            paper figures and analysis
+data/               H-alpha profiles (ISOSCELES, IACOB, UVES POP) + scaler
+outputs/            per-seed metrics (JSON), training logs, checkpoints
+final_submission/   report LaTeX source, figures and final PDF
+```
+
+## Installation
+
+Requires Python ≥ 3.10. A CUDA GPU is recommended for training (CPU works for `--eval-only`).
+
+```bash
+pip install -r requirements.txt
 ```
 
 ## Usage

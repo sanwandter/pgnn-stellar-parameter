@@ -1,6 +1,14 @@
 */__pycache__/
 entregas/
-final_submission/
 docs/
 .vscode/
 scripts/extra/
+
+# final_submission: only report sources, figures and final PDF are tracked
+final_submission/*
+!final_submission/entrega3.tex
+!final_submission/entrega3.pdf
+!final_submission/sample-base.bib
+!final_submission/acmart.cls
+!final_submission/ACM-Reference-Format.bst
+!final_submission/figs/
